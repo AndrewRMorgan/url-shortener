@@ -26,13 +26,18 @@ func main() {
 		port = "8080"
 	}
 
-	http.HandleFunc("/", Start)
+	http.HandleFunc("/", Router)
 	http.HandleFunc("/new/", AddURL)
 	http.ListenAndServe(":"+port, nil)
 }
 
-func Start(w http.ResponseWriter, r *http.Request) {
+func Router(w http.ResponseWriter, r *http.Request) {
 
+}
+
+func GetURL(w http.ResponseWriter, r *http.Request) {
+	var shortUrl string
+	err = db.QueryRow("SELECT original_url FROM urls WHERE short_url = ?", shortUrl)
 }
 
 func AddURL(w http.ResponseWriter, r *http.Request) {
