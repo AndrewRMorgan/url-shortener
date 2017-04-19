@@ -18,6 +18,8 @@ func init() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	defer db.Close()
 }
 
 func main() {
@@ -37,8 +39,15 @@ func Router(w http.ResponseWriter, r *http.Request) {
 
 func GetURL(w http.ResponseWriter, r *http.Request) {
 	var shortUrl string
-	err = db.QueryRow("SELECT original_url FROM urls WHERE short_url = ?", shortUrl)
+	var originalUrl string
+	err = db.QueryRow("SELECT original_url FROM urls WHERE short_url = ?", shortUrl).Scan(&originalUrl)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Println(originalUrl)
 }
+
 
 func AddURL(w http.ResponseWriter, r *http.Request) {
 
