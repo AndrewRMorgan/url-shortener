@@ -9,7 +9,7 @@ import (
 	"math/rand"
 	"strconv"
 
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -24,9 +24,7 @@ type JsonResponse struct {
 func init() {
 	db, err = spl.Open("mysql",
 		"user:password@tcp(127.0.0.1:3306)/hello")
-	if err != nil {
-		fmt.Println(err)
-	}
+	check(err)
 
 	defer db.Close()
 }
@@ -37,48 +35,42 @@ func main() {
 		port = "8080"
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", HomeHandler)
-	r.HandleFunc("/new/", NewHandler)
-	r.HandleFunc("/new/{url}", CreateURLHandler)
-	r.HandleFunc("/{id}", GetURLHandler)
-	http.Handle("/", r)
-
-	log.Fatal(http.ListenAndServe(":"+port, r))
+	router := httprouter.New()
+	router.GET("/", index)
+	router.GET("/new", new)
+	router.POST("/new/:url", createURL)
+	router.GET("/:id", getURL)
+	router.GET("/favicon.ico", ) //Don't quite know what should be here.
+	http.ListenAndServe(":"+port, router)
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func NewHandler(w http.ResponseWriter, r *http.Request) {
+func index(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetURLHandler(w http.ResponseWriter, r *http.Request) {
+func new(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func getURL(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	response := JsonResponse
 
-	vars := mux.Vars(r)
-	idStr := vars["id"]
+	idStr := ps.ByName("id")
 	idNum := strconv.Atoi(idStr)
 	var originalUrl string
 	var shortUrl string
 	err = db.QueryRow("SELECT original_url, short_url FROM urls WHERE id = ?", idNum).Scan(&originalUrl, &shortUrl)
-	if err != nil {
-		fmt.Println(err)
-	}
+	check(err)
 
 	response = JsonResponse{OriginalURL: originalURL, ShortURL: shortUrl}
 
 	js, err := json.Marshal(reponse)
-	if err != nil {
-		fmt.Println("Json Marshal returned nil")
-	}
+	check(err)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
 }
 
-func CreateURLHandler(w http.ResponseWriter, r *http.Request) {
+func createURL(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	originalUrl := vars["url"]
 	idNum := random(0, 9999)
@@ -86,9 +78,7 @@ func CreateURLHandler(w http.ResponseWriter, r *http.Request) {
 	shortUrl := "https://morning-retreat-24523.herokuapp.com/" + idStr
 
 	res, err := db.Exec("INSERT INTO urls(id, original_url, short_url) VALUES(?, ?, ?)", idNum, originalUrl, shortUrl)
-	if err != nil {
-		fmt.Println(err)
-	}
+	check(err)
 
 	GetURLHandler(shortUrl)
 }
@@ -96,4 +86,10 @@ func CreateURLHandler(w http.ResponseWriter, r *http.Request) {
 func random(min, max int) int {
 	rand.Seed(time.Now().Unix())
 	return rand.Intn(max - min) + min
+}
+
+func check(err error) {
+	if err != nil {
+		fmt.Println(err)
+	}
 }
