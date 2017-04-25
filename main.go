@@ -21,15 +21,16 @@ type JsonResponse struct {
 	ShortURL interface{} `json:"short_url"`
 }
 
-func init() {
+func main() {
 	db, err = spl.Open("mysql",
 		"user:password@tcp(127.0.0.1:3306)/hello")
 	check(err)
 
 	defer db.Close()
-}
 
-func main() {
+	err = db.Ping()
+	check(err)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -41,7 +42,8 @@ func main() {
 	router.POST("/new/:url", createURL)
 	router.GET("/:id", getURL)
 	router.GET("/favicon.ico", ) //Don't quite know what should be here.
-	http.ListenAndServe(":"+port, router)
+	err := http.ListenAndServe(":"+port, router)
+	check(err)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
