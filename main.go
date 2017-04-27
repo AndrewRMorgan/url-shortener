@@ -151,5 +151,5 @@ func main() {
 	router.HandleFunc("/{id:[0-9]+}", getURL).Methods("GET")
 		router.HandleFunc("/new", CreateURL).Methods("PUT")
 	//http.Handle("/favicon.ico", http.NotFoundHandler())
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }
