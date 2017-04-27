@@ -55,6 +55,7 @@ func main() {
 	}
 
 	router := mux.NewRouter()
+	router.SkipClean(true)
 	router.HandleFunc("/new/", index)
 	router.HandleFunc("/", index)
 	http.ListenAndServe(":"+port, router)
