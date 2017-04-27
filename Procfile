@@ -1,1 +1,1 @@
-web: url-shortener-microservice
+web: url-shortener
