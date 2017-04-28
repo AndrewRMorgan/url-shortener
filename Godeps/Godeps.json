@@ -9,9 +9,9 @@
 			"Rev": "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3"
 		},
 		{
-			"ImportPath": "github.com/gorilla/mux",
-			"Comment": "v1.3.0-5-g599cba5",
-			"Rev": "599cba5e7b6137d46ddf58fb1765f5d928e69604"
+			"ImportPath": "github.com/julienschmidt/httprouter",
+			"Comment": "v1.1-44-g6f3f391",
+			"Rev": "6f3f3919c8781ce5c0509c83fffc887a7830c938"
 		}
 	]
 }
