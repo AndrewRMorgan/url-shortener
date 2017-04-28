@@ -40,8 +40,9 @@ type Config struct {
 
 func main() {
 	var config = loadConfig("config.json")
+	databaseURI := os.Getenv("MYSQL_URL") //This is the config variable for Heroku
 
-	db, err = sql.Open("mysql", ""+config.Database.User+":"+config.Database.Password+"@tcp("+config.Host+":"+config.Port+")/"+config.Name+"")
+	db, err = sql.Open("mysql", databaseURI)
 	check(err)
 	defer db.Close()
 
