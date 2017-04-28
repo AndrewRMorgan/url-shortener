@@ -54,7 +54,7 @@ func main() {
 	}
 
 	router := httprouter.New()
-	router.GET("/new/*url", createURL) ///
+	router.GET("/new/*url", createURL)
 	router.GET("/get/:id", getURL)
 	router.GET("/", index)
 	http.ListenAndServe(":"+port, router)
@@ -73,7 +73,7 @@ func loadConfig(file string) Config {
 }
 
 func index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
-	fmt.Fprint(res, "Welcome to the URL Shortener Service!\n")
+	http.ServeFile(res, req, "./static/index.html")
 }
 
 func createURL(res http.ResponseWriter, req *http.Request, ps httprouter.Params) {
@@ -90,7 +90,7 @@ func createURL(res http.ResponseWriter, req *http.Request, ps httprouter.Params)
 			idNum := random(0, 9999)
 			idStr := strconv.Itoa(idNum)
 			check(err)
-			shortUrl = "https://morning-retreat-24523.herokuapp.com/" + idStr
+			shortUrl = "https://morning-retreat-24523.herokuapp.com/get/" + idStr
 			_, err := db.Exec("INSERT INTO urls(id, original_url, short_url) VALUES(?, ?, ?)", idNum, newUrl, shortUrl)
 			check(err)
 			response = UrlResponse{OriginalURL: newUrl, ShortURL: shortUrl}
