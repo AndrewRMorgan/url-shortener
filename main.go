@@ -78,7 +78,7 @@ func index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 
 func createURL(res http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 
-	var response = UrlResponse{}
+	response := UrlResponse{}
 	var shortUrl string
 	var originalUrl string = ps.ByName("url")
 	var newUrl string = strings.Replace(originalUrl, "/", "", 1) //This removes the first forward slash: '/'
@@ -102,7 +102,8 @@ func createURL(res http.ResponseWriter, req *http.Request, ps httprouter.Params)
 		res.Header().Set("Content-Type", "application/json")
 		res.Write(js)
 	} else {
-		errorResponse := ErrorResponse{Error: "Sorry, wrong url format. Please make sure you have a valid protocol and real site."}
+		//"Sorry, wrong url format. Please make sure you have a valid protocol and real site."
+		errorResponse := ErrorResponse{Error: newUrl}
 		js, err := json.Marshal(errorResponse)
 		check(err)
 		res.Header().Set("Content-Type", "application/json")
