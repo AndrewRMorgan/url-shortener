@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -8,22 +9,21 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func TestCreateUrl(t *testing.T) {
+func TestCreateURL(t *testing.T) {
+	expected := `{"original_url":"https://www.google.com", "short_url":"https://morning-retreat-24523.herokuapp.com/get/3578"}`
+	handler := createURL
+	router := httprouter.New()
+	router.GET("/new/*url", handler)
+
 	req, err := http.NewRequest("GET", "/new/https://www.google.com", nil)
 	if err != nil {
-		t.Fatal(err)
+		fmt.Println(err)
 	}
+	rr := httptest.NewRecorder()
 
-	res := httptest.NewRecorder()
-	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		createURL(w, r, httprouter.Params{})
-	})
-
-	handler.ServeHTTP(res, req)
-
-	expected := `{"original_url":"https://www.google.com", "short_url":"https://morning-retreat-24523.herokuapp.com/get/3578"}`
-	if res.Body.String() != expected {
+	router.ServeHTTP(rr, req)
+	if rr.Body.String() != expected {
 		t.Errorf("Handler returned unexpected body: Got %v but want %v",
-			res.Body.String(), expected)
+			rr.Body.String(), expected)
 	}
 }
