@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -9,16 +8,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+//Need to change test function to either make a database connect or use a mock one.
 func TestCreateURL(t *testing.T) {
-	expected := `{"original_url":"https://www.google.com", "short_url":"https://morning-retreat-24523.herokuapp.com/get/3578"}`
-	handler := createURL
-	router := httprouter.New()
-	router.GET("/new/*url", handler)
+	expected := `{"original_url":"https://www.google.com","short_url":"https://morning-retreat-24523.herokuapp.com/get/3578"}`
 
-	req, err := http.NewRequest("GET", "/new/https://www.google.com", nil)
-	if err != nil {
-		fmt.Println(err)
-	}
+	router := httprouter.New()
+	router.GET("/new/*url", createURL)
+
+	req, _ := http.NewRequest("GET", "/new/https://www.google.com", nil)
 	rr := httptest.NewRecorder()
 
 	router.ServeHTTP(rr, req)
