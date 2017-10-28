@@ -77,7 +77,6 @@ func index(res http.ResponseWriter, req *http.Request, _ httprouter.Params) {
 }
 
 func createURL(res http.ResponseWriter, req *http.Request, ps httprouter.Params) {
-
 	response := UrlResponse{}
 	var shortUrl string
 	var originalUrl string = ps.ByName("url")
@@ -102,18 +101,15 @@ func createURL(res http.ResponseWriter, req *http.Request, ps httprouter.Params)
 		res.Header().Set("Content-Type", "application/json")
 		res.Write(js)
 	} else {
-		//"Sorry, wrong url format. Please make sure you have a valid protocol and real site."
-		errorResponse := ErrorResponse{Error: newUrl}
+		errorResponse := ErrorResponse{Error: "Sorry, wrong url format. Please make sure you have a valid protocol and real site."}
 		js, err := json.Marshal(errorResponse)
 		check(err)
 		res.Header().Set("Content-Type", "application/json")
 		res.Write(js)
 	}
-
 }
 
 func getURL(res http.ResponseWriter, req *http.Request, ps httprouter.Params) {
-
 	var idStr string = ps.ByName("id")
 
 	var idNum, err = strconv.Atoi(idStr)
